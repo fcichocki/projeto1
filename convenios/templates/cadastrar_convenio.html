@@ -1,0 +1,26 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+    <h1>Cadastrar Convênio</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="nome">Nome do Convênio:</label>
+        <input type="text" name="nome" id="nome" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Convênios Cadastrados</h2>
+    <ul>
+        {% for convenio in convenios %}
+            {% if convenio.usuario == user.username %}
+                <li>
+                    {{ convenio.nome }}
+                    <form method="post" action="{% url 'excluir_convenio' convenio.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Tem certeza que deseja excluir definitivamente este convênio?');">Excluir</button>
+                    </form>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}

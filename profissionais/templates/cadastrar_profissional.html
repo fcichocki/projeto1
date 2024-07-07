@@ -1,0 +1,71 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+
+    <h1>Cadastrar Profissional</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div><label for="nome">Nome:</label><input type="text" name="nome" id="nome" required></div>
+        <div><label for="endereco">Endereço:</label><input type="text" name="endereco" id="endereco" required></div>
+        <div><label for="cep">CEP:</label><input type="text" name="cep" id="cep" required></div>
+        <div><label for="cpf_cnpj">CPF/CNPJ:</label><input type="text" name="cpf_cnpj" id="cpf_cnpj" required></div>
+        <div><label for="telefone">Telefone:</label><input type="text" name="telefone" id="telefone" required></div>
+        <div><label for="email">Email:</label><input type="email" name="email" id="email" required></div>
+        <div>
+            <label for="convenios">Convênios:</label><br>
+            {% for convenio in convenios %}
+                <input type="checkbox" name="convenios" value="{{ convenio.id }}" id="convenio_{{ convenio.id }}">
+                <label for="convenio_{{ convenio.id }}">{{ convenio.nome }}</label><br>
+            {% endfor %}
+        </div>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+
+    <h2>Profissionais Cadastrados</h2>
+    <ul>
+        {% for profissional in profissionais %}
+        <li>
+            <a href="#" data-toggle="modal" data-target="#profissionalModal{{ profissional.id }}">
+                {{ profissional.nome }}
+            </a>
+    
+            <!-- Botão Editar -->
+            <a href="{% url 'editar_profissional' profissional.id %}" class="btn btn-primary">Editar</a>
+
+            <!-- Botão Excluir -->
+            <form method="post" action="{% url 'excluir_profissional' profissional.id %}" onsubmit="return confirm('Tem certeza que deseja excluir este profissional?');" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Excluir</button>
+            </form>
+
+            <!-- Modal -->
+            <div class="modal fade" id="profissionalModal{{ profissional.id }}" tabindex="-1" role="dialog" aria-labelledby="profissionalModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profissionalModalLabel">{{ profissional.nome }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Endereço: {{ profissional.endereco }}</p>
+                            <p>CEP: {{ profissional.cep }}</p>
+                            <p>CPF/CNPJ: {{ profissional.cpf_cnpj }}</p>
+                            <p>Telefone: {{ profissional.telefone }}</p>
+                            <p>Email: {{ profissional.email }}</p>
+                            <p>Convênios:</p>
+                            <ul>
+                                {% for convenio in profissional.convenios.all %}
+                                <li>{{ convenio.nome }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

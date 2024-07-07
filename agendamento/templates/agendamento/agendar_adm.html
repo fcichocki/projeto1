@@ -1,0 +1,129 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h1 class="mb-4 text-primary">Agendar Horário</h1>
+                        <button class="btn btn-primary mb-4" onclick="window.location.href='{% url 'agendar' %}'">
+                            <i class="fas fa-calendar-plus"></i> Agendar
+                        </button>
+                        <h2 class="mb-3">Agendamentos Cadastrados</h2>
+
+                        <!-- Campo de busca por nome -->
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="agendamentosTable">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Telefone</th>
+                                        <th>Data</th>
+                                        <th>Hora</th>
+                                        <th>Profissional</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if agendamentos %}
+                                    {% for agendamento in agendamentos %}
+                                    <tr>
+                                        <td>{{ agendamento.nome }}</td>
+                                        <td>{{ agendamento.email }}</td>
+                                        <td>{{ agendamento.telefone }}</td>
+                                        <td>{{ agendamento.data }}</td>
+                                        <td>{{ agendamento.horario }}</td>
+                                        <td>{{ agendamento.profissional }}</td>
+                                        <td>
+                                            <a href="{% url 'editar_agendamento' agendamento.id %}"
+                                                class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <form method="post" action="{% url 'excluir_agendamento' agendamento.id %}"
+                                                class="d-inline-block delete-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Tem certeza que deseja excluir esse agendamento?')">
+                                                    <i class="fas fa-trash-alt"></i> Excluir
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">Nenhum agendamento cadastrado
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noResults" class="text-center mt-3 d-none">
+                            <p class="text-muted">Nenhum resultado encontrado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('keyup', function () {
+                var searchText = $(this).val().toLowerCase();
+                var hasResults = false;
+                $('#agendamentosTable tbody tr').each(function () {
+                    var nome = $(this).find('td:eq(0)').text().toLowerCase();
+                    if (nome.includes(searchText)) {
+                        $(this).show();
+                        hasResults = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                $('#noResults').toggleClass('d-none', hasResults);
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#id_data').change(function () {
+                var data = $(this).val();
+                $.ajax({
+                    url: '{% url 'horarios_disponiveis' %}',
+                    data: { 'data': data },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('#id_horario').empty();
+                        $.each(response, function (index, value) {
+                            $('#id_horario').append($('<option>', {
+                                value: value,
+                                text: value
+                            }));
+                        });
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+{% endblock %}

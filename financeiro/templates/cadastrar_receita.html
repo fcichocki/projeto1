@@ -1,0 +1,205 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container mt-5">
+    <h1 class="mb-5 text-center" style="color: #5D6D7E;">Cadastro de Receitas</h1>
+    <div class="card shadow p-3 mb-5 bg-white rounded" style="border-top: 5px solid #5DADE2;">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="cliente" class="font-weight-bold">Cliente:</label>
+                        <select name="cliente" class="form-control custom-select bg-light">
+                            <option value="" disabled selected>Clique aqui para selecionar o cliente...</option>
+                            {% for paciente in pacientes %}
+                            <option value="{{ paciente.id }}">{{ paciente.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao" class="font-weight-bold">Descrição:</label>
+                        <select id="descricaoSelect" name="descricao" class="form-control custom-select bg-light" onchange="updateValor()">
+                            <option value="" disabled selected>Clique aqui para selecionar o produto...</option>
+                            {% for produto in produtos %}
+                            <option value="{{ produto.id }}" data-valor="{{ produto.valor }}">{{ produto.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="valor" class="font-weight-bold">Valor:</label>
+                        <input type="text" id="valorInput" name="valor" class="form-control bg-light" placeholder="Valor">
+                    </div>
+                    
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="data" class="font-weight-bold">Data:</label>
+                        <input type="date" name="data" value="{{ hoje }}" class="form-control bg-light">
+                    </div>
+                    <div class="form-group">
+                        <label for="status" class="font-weight-bold">Status:</label>
+                        <select id="status" name="status" class="form-control custom-select bg-light">
+                            <option value="pago">Pago</option>
+                            <option value="aguardando pagamento">Aguardando pagamento</option>
+                            <option value="sem pagamento">Sem pagamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="forma_pagamento" class="font-weight-bold">Forma de Pagamento:</label>
+                        <select id="forma_pagamento" name="forma_pagamento" class="form-control custom-select bg-light">
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Cartão de Débito">Cartão de Débito</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Pix">Pix</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-lg btn-block" style="background-image: linear-gradient(to right, #3498DB , #5DADE2); color: white;">Salvar</button>
+        </form>
+    </div>
+
+    <h2 class="mb-3 text-center" style="color: #5D6D7E;">Receitas Cadastradas</h2>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Forma de Pagamento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for receita in receitas %}
+                <tr>
+                    <td>{{ receita.cliente.nome }}</td>
+                    <td>{{ receita.descricao.nome }}</td>
+                    <td>{{ receita.valor }}</td>
+                    <td>{{ receita.data }}</td>
+                    <td>{{ receita.status }}</td>
+                    <td>{{ receita.forma_pagamento }}</td>
+                    <td>
+                        <button class="btn btn-sm" style="background-color: #054F77; color: white;" onclick="abrirModal('modalEditar{{ receita.id }}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form action="{% url 'excluir_receita' receita.id %}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta receita?');" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </form>
+                        <div id="modalEditar{{ receita.id }}" class="modal fade" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Receita</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="{% url 'editar_receita' receita.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="cliente">Cliente:</label>
+                                                <select name="cliente" class="form-control">
+                                                    {% for paciente in pacientes %}
+                                                    <option value="{{ paciente.id }}" {% if paciente.id == receita.cliente.id %}selected{% endif %}>{{ paciente.nome }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="descricao">Descrição:</label>
+                                                <select name="descricao" class="form-control">
+                                                    {% for produto in produtos %}
+                                                    <option value="{{ produto.id }}" {% if produto.id == receita.descricao.id %}selected{% endif %}>{{ produto.nome }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="valor">Valor:</label>
+                                                <input type="text" name="valor" value="{{ receita.valor }}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="data">Data:</label>
+                                                <input type="date" name="data" value="{{ receita.data|date:'Y-m-d' }}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="status">Status:</label>
+                                                <select name="status" class="form-control">
+                                                    <option value="pago" {% if receita.status == 'pago' %}selected{% endif %}>Pago</option>
+                                                    <option value="aguardando pagamento" {% if receita.status == 'aguardando pagamento' %}selected{% endif %}>Aguardando pagamento</option>
+                                                    <option value="sem pagamento" {% if receita.status == 'sem pagamento' %}selected{% endif %}>Sem pagamento</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="forma_pagamento">Forma de Pagamento:</label>
+                                                <select name="forma_pagamento" class="form-control">
+                                                    <option value="Dinheiro" {% if receita.forma_pagamento == 'Dinheiro' %}selected{% endif %}>Dinheiro</option>
+                                                    <option value="Cartão de Débito" {% if receita.forma_pagamento == 'Cartão de Débito' %}selected{% endif %}>Cartão de Débito</option>
+                                                    <option value="Cartão de Crédito" {% if receita.forma_pagamento == 'Cartão de Crédito' %}selected{% endif %}>Cartão de Crédito</option>
+                                                    <option value="Pix" {% if receita.forma_pagamento == 'Pix' %}selected{% endif %}>Pix</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap, jQuery, and Font Awesome scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+    function updateValor() {
+        var select = document.getElementById('descricaoSelect');
+        var selectedOption = select.options[select.selectedIndex];
+        var valor = selectedOption.getAttribute('data-valor');
+        document.getElementById('valorInput').value = valor;
+    }
+
+    function abrirModal(id) {
+        $('#' + id).modal('show');
+    }
+
+    // Close modal function
+    $('.modal').on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset(); // Reset form on close
+    });
+
+
+
+// Fechar modal usando JavaScript
+function fecharModal(id) {
+    $('#' + id).modal('hide');
+}
+
+// Adicionar evento click ao botão fechar
+$('.close, .btn-secondary').click(function() {
+    var modalId = $(this).closest('.modal').attr('id');
+    fecharModal(modalId);
+});
+
+
+</script>
+{% endblock %}

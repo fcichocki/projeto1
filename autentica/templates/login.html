@@ -1,0 +1,24 @@
+
+
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+    
+
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+    <div style="background-color: #0056b3; color: white; padding: 10px 20px; text-align: center;">
+        <h2>Login</h2>
+    </div>
+    <div style="padding: 20px; text-align: center;">
+        <form method="post" style="display: inline-block; padding: 20px; background: white; border: 1px solid #ccc; border-radius: 5px;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" style="background-color: #0056b3; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">Login</button>
+        </form>
+    </div>
+
+
+    {% endblock %}

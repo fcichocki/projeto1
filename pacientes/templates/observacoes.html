@@ -1,0 +1,47 @@
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+
+    <div class="container">
+        <h2>Observações de {{ paciente.nome }}</h2>
+
+        <form method="post" class="my-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <textarea class="form-control text-area" name="observacoes" placeholder="Adicione uma nova observação..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar Observação</button>
+        </form>
+
+        {% if observacoes %}
+            <h3>Observações Anteriores</h3>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-comments"></i> Observações
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for observacao in observacoes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ observacao.observacoes }}
+                            <form method="post" action="{% url 'excluir_observacao' observacao.id %}" onsubmit="return confirm('Tem certeza que deseja excluir esta observação?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p>Nenhuma observação cadastrada para este paciente.</p>
+        {% endif %}
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+    
+    {% endblock %}

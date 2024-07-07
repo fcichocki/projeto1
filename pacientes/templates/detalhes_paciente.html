@@ -1,0 +1,725 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Paciente</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Popper (Bootstrap 5) -->
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .tab-content {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+
+        .btn:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        
+
+        
+
+
+    </style>
+</head>
+<body>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="paciente-tab" data-toggle="tab" href="#paciente" role="tab" aria-controls="paciente" aria-selected="true">Detalhes do Paciente</a>
+        </li>
+            <a class="nav-link" id="anamnese-tab" data-toggle="tab" href="#anamnese" role="tab" aria-controls="anamnese" aria-selected="false">Anamnese</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="termos-tab" data-toggle="tab" href="#termos" role="tab" aria-controls="termos" aria-selected="false">Termos de Consentimento</a>
+        </li>
+        <li class="nav-item">
+        <li class="nav-item">
+            <a class="nav-link" id="prescricoes-tab" data-toggle="tab" href="#prescricoes" role="tab" aria-controls="prescricoes" aria-selected="false">Prescrições</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="atestados-tab" data-toggle="tab" href="#atestados" role="tab" aria-controls="atestados" aria-selected="false">Atestados</a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" id="anotacoes-tab" data-toggle="tab" href="#anotacoes" role="tab" aria-controls="anotacoes" aria-selected="false">Anotações</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="arquivos-tab" data-toggle="tab" href="#arquivos" role="tab" aria-controls="arquivos" aria-selected="false">Arquivos do Paciente</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+
+        <!-- Aba  Paciente  -->
+        <div class="tab-pane fade show active" id="paciente" role="tabpanel" aria-labelledby="paciente-tab">
+            <div class="container py-4">
+                <h1 class="mb-4">Detalhes do Paciente</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">{{ paciente.nome }}</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="bi bi-person-badge-fill"></i> CPF: {{ paciente.cpf }}</li>
+                            <li class="list-group-item"><i class="bi bi-telephone-fill"></i> Telefone: {{ paciente.telefone }}</li>
+                            <li class="list-group-item"><i class="bi bi-envelope-fill"></i> Email: {{ paciente.email }}</li>
+                            <li class="list-group-item"><i class="bi bi-geo-alt-fill"></i> Endereço: {{ paciente.endereco }}</li>
+                            <li class="list-group-item"><i class="bi bi-map-fill"></i> CEP: {{ paciente.cep }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Aba  Anamnese  -->
+        
+        <div class="tab-pane fade" id="anamnese" role="tabpanel" aria-labelledby="anamnese-tab">
+            <div class="container py-5">
+                <h2 class="mb-4 text-center">Anamnese</h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <a href="{% url 'anamnese_paciente' paciente.id %}" class="btn btn-lg btn-primary btn-block mb-3" style="border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <i class="bi bi-journal-medical"></i> Preencher Anamnese
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <button onclick="openModal('anamneseModal')" class="btn btn-lg btn-secondary btn-block mb-3" style="border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <i class="bi bi-eye-fill"></i> Exibir Anamnese
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="anamneseModal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Anamnese de {{ paciente.nome }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% for anamnese in anamneses_paciente %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title"><strong>Pergunta:</strong> {{ anamnese.anamnese.anamnese }}</h5>
+                                    <p class="card-text"><strong>Resposta:</strong> {{ anamnese.confirmacao|yesno:"Sim,Não" }}</p>
+                                    <p class="card-text"><strong>Observações:</strong> {{ anamnese.observacoes }}</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">Nenhuma anamnese registrada para este paciente.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+ 
+        <!-- Aba Termos de Consentimento -->
+<div class="tab-pane fade" id="termos" role="tabpanel" aria-labelledby="termos-tab">
+    <div class="container py-5">
+        <h2 class="mb-4 text-center">Termos de Consentimento</h2>
+        <div class="d-flex justify-content-center mb-3">
+            <a href="{% url 'cadastrar_termo_consentimento' paciente.id %}" class="btn btn-lg btn-primary" style="border-radius: 20px;">
+                <i class="bi bi-plus"></i> Cadastrar novo termo de consentimento
+            </a>
+        </div>
+        <div class="row justify-content-center">
+            {% for termo in termos %}
+                <div class="col-12 mb-4"> <!-- Cards will now stack vertically in a single column -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="#" onclick="openModal('modal-{{ termo.id }}')">{{ termo.termo_consentimento.nome }} - {{ termo.data_hora|date:"d/m/Y H:i" }}</a>
+                            </h5>
+                            <button class="btn btn-danger btn-sm float-end" onclick="confirmDeletion('{{ termo.id }}')">Excluir</button>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Modal -->
+                    <div id="confirm-modal-{{ termo.id }}" class="modal fade" tabindex="-1" aria-labelledby="modal-label-{{ termo.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modal-label-{{ termo.id }}">Confirmar Exclusão</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Tem certeza que deseja remover este termo de consentimento?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{% url 'excluir_termo_consentimento' termo.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Sim</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Term Details Modal -->
+                    <div id="modal-{{ termo.id }}" class="modal fade" tabindex="-1" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Detalhes do Termo de Consentimento</h5>
+                                    <button type="button" class="btn-close" onclick="closeModal('modal-{{ termo.id }}')" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+                                    <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+                                    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+                                    <p><strong>Email:</strong> {{ paciente.email }}</p>
+                                    <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
+                                    <p><strong>CEP:</strong> {{ paciente.cep }}</p>
+                                    <p><strong>Nome do Termo:</strong> {{ termo.termo_consentimento.nome }}</p>
+                                    <p><strong>Termo:</strong> {{ termo.termo_consentimento.termo_consentimento }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="card">
+                    Nenhum termo de consentimento cadastrado.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<!-- Aba Prescrições -->
+<div class="tab-pane fade" id="prescricoes" role="tabpanel" aria-labelledby="prescricoes-tab">
+    <div class="container py-5">
+        <h2 class="mb-4 text-center">Prescrições</h2>
+        <div class="d-flex justify-content-center mb-3">
+            
+            <!-- Botão que aciona a modal de Nova Prescrição -->
+            <button class="btn btn-lg btn-primary" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#novaPrescricaoModal">
+                <i class="bi bi-plus"></i> Nova Prescrição
+            </button>
+        </div>
+        <div class="row justify-content-center">
+            {% for prescricao in prescricoes %}
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ prescricao.nome }} {{ prescricao.data_hora|date:"d/m/Y H:i" }}
+                            </h5>
+                            <p class="card-text"><strong>Prescrição:</strong> {{ prescricao.prescricoes }}</p>
+
+                            <button class="btn btn-danger btn-sm float-end" onclick="confirmPrescricaoDeletion(this)" data-url="{% url 'excluir_prescricao' prescricao.id %}">Excluir</button>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="card">
+                    Nenhuma prescrição registrada.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal Nova Prescrição -->
+    <div class="modal fade" id="novaPrescricaoModal" tabindex="-1" aria-labelledby="novaPrescricaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="novaPrescricaoModalLabel">Nova Prescrição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulário para nova prescrição -->
+                    <form action="{% url 'criar_prescricao' paciente.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+                        <div class="mb-3">
+                            <label for="prescricaoTexto" class="form-label">Prescrição:</label>
+                            <textarea class="form-control" id="prescricaoTexto" name="prescricaoTexto" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Prescrição</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Aba Atestados -->
+<div class="tab-pane fade" id="atestados" role="tabpanel" aria-labelledby="atestados-tab">
+    <div class="container py-5">
+        <h2 class="mb-4 text-center">Atestados</h2>
+        <div class="d-flex justify-content-center mb-3">
+            <a href="{% url 'novo_atestado' paciente.id %}" class="btn btn-lg btn-primary" style="border-radius: 20px;">
+                <i class="bi bi-plus"></i> Novo Atestado
+            </a>
+        </div>
+        {% if atestados_paciente %}
+            <div class="row justify-content-center">
+                {% for atestado in atestados_paciente %}
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="#" onclick="openModal('atestadoModal{{ atestado.id }}')">
+                                        Atestado emitido em {{ atestado.data_hora|date:"d/m/Y" }}, às {{ atestado.data_hora|time:"H:i" }} horas
+                                    </a>
+                                </h5>
+                                <button class="btn btn-danger btn-sm float-end" onclick="confirmDeletion('{{ atestado.id }}')">Excluir</button>
+
+                                <!-- Atestado Details Modal -->
+                                <div id="atestadoModal{{ atestado.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Detalhes do Atestado</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>{{ atestado.atestado }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Confirmation Modal -->
+                                <div class="modal fade" id="confirm-modal-{{ atestado.id }}" tabindex="-1" aria-labelledby="modal-label-{{ atestado.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modal-label-{{ atestado.id }}">Confirmar Exclusão</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja remover este atestado?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{% url 'excluir_atestado' atestado.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Sim</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-muted">Nenhum atestado registrado para este paciente.</p>
+        {% endif %}
+    </div>
+</div>
+
+ 
+<!-- Aba Anotações -->
+<div class="tab-pane fade" id="anotacoes" role="tabpanel" aria-labelledby="anotacoes-tab">
+    <div class="container py-4">
+        <h2>Anotações de {{ paciente.nome }}</h2>
+        
+        <!-- Card para exibir anotações -->
+        <div class="card">
+            <div id="anotacoes-content" class="card-body">
+                <p class="card-text">{{ anotacao.anotacoes }}</p>
+                <button class="btn btn-primary" onclick="openEditModal()">Editar Anotações</button>
+            </div>
+        </div>
+        
+        <!-- Modal de edição de anotações -->
+        <div id="editAnotacoesModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Anotações de {{ paciente.nome }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="editAnotacoesForm" method="POST" action="{% url 'save_anotacoes' paciente.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <textarea id="editedAnotacoes" name="anotacoes" class="form-control" rows="6"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="saveAnotacoesBtn">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let anotacoesCarregadas = false;
+
+    function carregarAnotacoes() {
+        if (!anotacoesCarregadas) {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "ver_anotacoes" paciente.id %}?ajax=1',
+                success: function (data) {
+                    $('#anotacoes-content').html('<p class="card-text">' + data.anotacao + '</p><button class="btn btn-primary" onclick="openEditModal()">Editar Anotações</button>');
+                    anotacoesCarregadas = true;
+                },
+                error: function () {
+                    alert('Ocorreu um erro ao carregar as anotações.');
+                }
+            });
+        }
+    }
+
+    function openEditModal() {
+        // Carrega as anotações do paciente na modal
+        $.ajax({
+            type: 'GET',
+            url: '{% url "ver_anotacoes" paciente.id %}?ajax=1',
+            success: function (data) {
+                $('#editedAnotacoes').val(data.anotacao);
+                $('#editAnotacoesModal').modal('show');
+            },
+            error: function () {
+                alert('Ocorreu um erro ao carregar as anotações para edição.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr('id') === 'anotacoes-tab') {
+                carregarAnotacoes();
+            }
+        });
+
+        $('#editAnotacoesForm').on('submit', function(event) {
+            event.preventDefault();  // Impede o envio padrão do formulário
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.status === "success") {
+                        $('#editAnotacoesModal').modal('hide');
+                        // Atualiza as anotações após salvar
+                        $('#anotacoes-content').html('<p class="card-text">' + $('#editedAnotacoes').val() + '</p><button class="btn btn-primary" onclick="openEditModal()">Editar Anotações</button>');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Ocorreu um erro ao salvar as anotações.');
+                }
+            });
+        });
+
+        // Função para fechar a modal ao clicar em "Cancelar" ou no botão de fechar
+        $('#editAnotacoesModal').on('hidden.bs.modal', function () {
+            $('#editAnotacoesForm')[0].reset();
+        });
+
+        // Fechar a modal ao clicar no botão de "Cancelar"
+        $('#editAnotacoesModal .btn-secondary, .modal-header .close').on('click', function () {
+            $('#editAnotacoesModal').modal('hide');
+        });
+    });
+</script>
+
+
+
+
+
+
+<!-- Aba Arquivos -->
+<div class="tab-pane fade" id="arquivos" role="tabpanel" aria-labelledby="arquivos-tab">
+    <h2 class="mb-4">Arquivos do Paciente</h2>
+    <a href="#" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#adicionarArquivoModal">Adicionar Novo Arquivo</a>
+
+
+    <div class="row">
+        {% if arquivos_paciente %}
+            {% for arquivo in arquivos_paciente %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        {% if arquivo.tipo == 'imagem' %}
+                            <img src="{{ arquivo.arquivo.url }}" class="card-img-top" alt="{{ arquivo.arquivo.name }}">
+                        {% else %}
+                            <div class="card-img-top text-center py-3">
+                                <i class="fas fa-file-alt fa-3x text-secondary"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ arquivo.arquivo.name }}</h5>
+                            <p class="card-text mb-auto">Tipo: {{ arquivo.tipo }}</p>
+                            <div class="mt-auto">
+                                <a href="{{ arquivo.arquivo.url }}" class="btn btn-primary">Visualizar</a>
+                                <a href="#" onclick="confirmarExclusao('{{ arquivo.id }}')" class="btn btn-danger">Excluir</a>
+                                <form id="deleteForm-{{ arquivo.id }}" action="{% url 'excluir_arquivo' arquivo.id %}" method="post" style="display: none;">
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Nenhum arquivo encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal for Adicionar Arquivo -->
+<div class="modal fade" id="adicionarArquivoModal" tabindex="-1" aria-labelledby="adicionarArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adicionarArquivoModalLabel">Adicionar Arquivo para {{ paciente.nome }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formAdicionarArquivo" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="arquivos" class="form-label">Selecionar arquivos:</label>
+                            <input type="file" class="form-control" name="arquivos" id="arquivos" multiple required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+    <!-- Scripts -->
+    
+
+    <script>
+        $(document).ready(function() {
+            $('#myTab a').on('click', function (e) {
+                e.preventDefault()
+                $(this).tab('show')
+            })
+        });
+    </script>
+
+
+    <script>
+    
+
+        <!-- Função fecha modal em Termos -->
+        function closeConfirmModal(termoId) {
+            var confirmModal = document.getElementById('confirm-modal-' + termoId);
+            if (confirmModal) {
+                confirmModal.style.display = 'none';
+            }
+        }
+        <!-- Função confirma exclusao em Arquivos -->
+        function confirmarExclusao(arquivoId) {
+            if (confirm('Tem certeza que deseja excluir este arquivo?')) {
+                document.getElementById('deleteForm-' + arquivoId).submit();
+            }
+        }
+        <!-- Função abre modal em Atestado, termos de consentimento e anamnese -->
+        
+        function openModal(modalId) {
+            var myModal = new bootstrap.Modal(document.getElementById(modalId));
+            myModal.show();
+        }
+
+     
+        <!-- Fecha modal em Termo de consentimento -->    
+        function closeModal(modalId) {
+            var myModalEl = document.getElementById(modalId);
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            if (modal) {
+                modal.hide();
+            }
+        }
+
+        <!-- Confirmar exclusao de termo-->    
+        function confirmDeletion(termoId) {
+            var confirmModal = new bootstrap.Modal(document.getElementById('confirm-modal-' + termoId));
+            confirmModal.show();
+        }
+        
+
+        <!-- Função confirma exclusao em Prescricao -->
+        function confirmPrescricaoDeletion(buttonElement) {
+            if (confirm('Tem certeza que deseja excluir esta prescrição?')) {
+                var url = buttonElement.getAttribute('data-url');  // Pega a URL do atributo data-url do botão
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+        
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = '{{ csrf_token }}';  // Aqui, '{{ csrf_token }}' é processado apenas uma vez pelo Django e é válido para uso
+                form.appendChild(csrfInput);
+        
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+
+    </script>
+
+
+
+
+    <!-- Função adicionar prescrições  -->
+    
+    <script>
+        $(document).ready(function () {
+            $('#formNovaPrescricao').submit(function (event) {
+                event.preventDefault(); // Impede o envio do formulário padrão
+                var formData = $(this).serialize(); // Obtém os dados do formulário
+                $.post($(this).attr('action'), formData)
+                    .done(function (data) {
+                        // Ação a ser realizada em caso de sucesso, se necessário
+                        console.log('Prescrição adicionada com sucesso!');
+                        $('#novaPrescricaoModal').modal('hide'); // Fecha a janela modal após a submissão
+                        location.reload(); // Recarrega a página para atualizar as prescrições exibidas
+                    })
+                    .fail(function () {
+                        // Ação a ser realizada em caso de falha, se necessário
+                        console.log('Erro ao adicionar prescrição.');
+                    });
+            });
+        });
+    </script>
+
+
+<!-- Função adicionar arquivos  -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura o evento de envio do formulário
+            document.querySelector('#formAdicionarArquivo').addEventListener('submit', function (e) {
+                e.preventDefault(); // Impede o envio padrão do formulário
+                // Cria um objeto FormData para enviar os dados do formulário via AJAX
+                const formData = new FormData(this);
+                
+                // Envia a requisição AJAX
+                fetch('{% url 'adicionar_arquivo' paciente.id %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}' // Adiciona o token CSRF aos cabeçalhos da requisição
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Se a resposta for bem-sucedida, fecha a janela modal
+                        const modal = new bootstrap.Modal(document.getElementById('adicionarArquivoModal'));
+                        modal.hide();
+                        // Recarrega a página para exibir os arquivos atualizados (opcional)
+                        location.reload();
+                    } else {
+                        // Se houver um erro na resposta, exibe uma mensagem de erro
+                        alert('Ocorreu um erro ao enviar o arquivo.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+            });
+        });
+    </script>
+    
+    
+    
+
+
+
+
+    
+</body>
+</html>
+
+{% endblock %}

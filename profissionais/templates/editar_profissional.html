@@ -1,0 +1,51 @@
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+
+    <h1>Editar Profissional</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" value="{{ profissional.nome }}" required>
+        </div>
+        <div>
+            <label for="endereco">Endereço:</label>
+            <input type="text" name="endereco" id="endereco" value="{{ profissional.endereco }}" required>
+        </div>
+        <div>
+            <label for="cep">CEP:</label>
+            <input type="text" name="cep" id="cep" value="{{ profissional.cep }}" required>
+        </div>
+        <div>
+            <label for="cpf_cnpj">CPF/CNPJ:</label>
+            <input type="text" name="cpf_cnpj" id="cpf_cnpj" value="{{ profissional.cpf_cnpj }}" required>
+        </div>
+        <div>
+            <label for="telefone">Telefone:</label>
+            <input type="text" name="telefone" id="telefone" value="{{ profissional.telefone }}" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" value="{{ profissional.email }}" required>
+        </div>
+        <div>
+            <label>Convênios:</label><br>
+            {% for convenio in convenios %}
+                <input type="checkbox" name="convenios" value="{{ convenio.id }}"
+                       {% if convenio in profissional.convenios.all %}checked{% endif %}
+                       id="convenio_{{ convenio.id }}">
+                <label for="convenio_{{ convenio.id }}">{{ convenio.nome }}</label><br>
+            {% endfor %}
+        </div>
+        <button type="submit">Salvar Alterações</button>
+
+        <a href="{% url 'cadastrar_profissional' %}">Sair sem salvar alterações</a>
+
+    </form>
+
+    
+    {% endblock %}

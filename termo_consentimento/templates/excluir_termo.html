@@ -1,0 +1,18 @@
+    
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+
+    <h1>Excluir Termo de Consentimento</h1>
+    <p>Tem certeza que deseja excluir o termo de consentimento "{{ termo.nome }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirmar Exclusão</button>
+    </form>
+    <a href="{% url 'listar_termos' %}">Cancelar</a>
+    
+    
+    {% endblock %}

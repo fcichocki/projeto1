@@ -1,0 +1,95 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Search form -->
+            <div class="mb-4">
+                <form method="get" action="{% url 'buscar_pacientes' %}" class="input-group">
+                    <input type="text" name="q" placeholder="Buscar paciente..." class="form-control" value="{{ query }}">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Buscar</button>
+                    <button type="reset" class="btn btn-outline-secondary" onclick="window.location='{% url 'cadastrar_paciente' %}';"><i class="bi bi-x-lg"></i> Limpar</button>
+                </form>
+            </div>
+
+            <!-- Patient registration form -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header text-white bg-primary">
+                    <h4 class="text-center"><i class="bi bi-person-plus-fill"></i> Cadastro de Paciente</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label"><i class="bi bi-fonts"></i> Nome</label>
+                                <input type="text" class="form-control" name="nome" id="nome" maxlength="200" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label"><i class="bi bi-envelope-fill"></i> Email</label>
+                                <input type="email" class="form-control" name="email" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefone" class="form-label"><i class="bi bi-telephone-fill"></i> Telefone</label>
+                                <input type="text" class="form-control" name="telefone" id="telefone" maxlength="15" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cpf" class="form-label"><i class="bi bi-person-badge-fill"></i> CPF</label>
+                                <input type="text" class="form-control" name="cpf" id="cpf" maxlength="11" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cep" class="form-label"><i class="bi bi-geo-alt-fill"></i> CEP</label>
+                                <input type="text" class="form-control" name="cep" id="cep" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endereco" class="form-label"><i class="bi bi-house-fill"></i> Endereço</label>
+                                <input type="text" class="form-control" name="endereco" id="endereco" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="sexo" class="form-label"><i class="bi bi-gender-ambiguous"></i> Sexo</label>
+                                <select class="form-control" name="sexo" id="sexo" required>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List of patients -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="text-center"><i class="bi bi-people-fill"></i> Pacientes Cadastrados</h4>
+                </div>
+                <div class="card-body">
+                    {% if pacientes %}
+                        <ul class="list-group">
+                            {% for paciente in pacientes %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ paciente.nome }}</span>
+                                    <div>
+                                        <a href="{% url 'detalhes_paciente' paciente.id %}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Ver Detalhes</a>
+                                        <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Editar</a>
+                                        <form method="post" action="{% url 'excluir_paciente' paciente.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Excluir</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center">Nenhum paciente cadastrado.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

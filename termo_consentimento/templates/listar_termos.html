@@ -1,0 +1,24 @@
+    
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+
+    <h1>Termos de Consentimento</h1>
+    <a href="{% url 'cadastrar_termo' %}">Cadastrar Novo Termo</a>
+    <ul>
+        {% for termo in termos %}
+        <li>
+            {{ termo.nome }}
+            - <a href="{% url 'editar_termo' termo.id %}">Editar</a>
+            - <a href="{% url 'excluir_termo' termo.id %}" onclick="return confirm('Tem certeza que deseja excluir este termo?');">Excluir</a>
+        </li>
+        {% empty %}
+        <li>Nenhum termo de consentimento cadastrado.</li>
+        {% endfor %}
+    </ul>
+
+    
+    {% endblock %}

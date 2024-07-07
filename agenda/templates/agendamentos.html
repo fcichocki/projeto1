@@ -1,0 +1,146 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Formulário de Cadastro - Agora com mais espaço -->
+        <div class="col-lg-8 mb-5">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        <i class="fas fa-calendar-plus"></i> Cadastrar Novo Agendamento
+                    </h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label">Nome:</label>
+                                <input type="text" name="nome" id="nome" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email:</label>
+                                <input type="email" name="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefone" class="form-label">Telefone:</label>
+                                <input type="text" name="telefone" id="telefone" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="data" class="form-label">Data:</label>
+                                <input type="date" name="data" id="data" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="hora" class="form-label">Hora:</label>
+                                <select name="hora" id="hora" class="form-select" required>
+                                    {% for horario in horarios %}
+                                    <option value="{{ horario }}">{{ horario }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profissional" class="form-label">Profissional:</label>
+                                <select name="profissional" id="profissional" class="form-select" required>
+                                    {% for profissional in profissionais %}
+                                    <option value="{{ profissional.id }}">{{ profissional.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-end">
+                            <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agendamentos do Dia - Agora um pouco mais estreito -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-calendar-day"></i> Agendamentos do Dia
+                    </h2>
+                    {% if agendamentos_do_dia %}
+                    <div class="list-group">
+                        {% for agendamento in agendamentos_do_dia %}
+                        <div class="list-group-item">
+                            <div>
+                                <h5 class="mb-1">{{ agendamento.nome }}</h5>
+                                <p class="mb-1">{{ agendamento.hora }} - {{ agendamento.profissional.nome }}</p>
+                                <small>Status: {{ agendamento.status }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">
+                        <i class="fas fa-calendar-times"></i> Nenhum agendamento para hoje.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agendamentos Cadastrados -->
+    <div class="mt-5">
+        <h2>
+            <i class="fas fa-calendar-check"></i> Agendamentos Cadastrados
+        </h2>
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Telefone</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Profissional</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Inserido por</th>
+                        <th scope="col">Inserido em</th>
+                        <th scope="col">Ação</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for agendamento in agendamentos %}
+                    <tr>
+                        <td>{{ agendamento.nome }}</td>
+                        <td>{{ agendamento.email }}</td>
+                        <td>{{ agendamento.telefone }}</td>
+                        <td>{{ agendamento.data }}</td>
+                        <td>{{ agendamento.hora }}</td>
+                        <td>{{ agendamento.profissional.nome }}</td>
+                        <td>{{ agendamento.tipo }}</td>
+                        <td>{{ agendamento.status }}</td>
+                        <td>{{ agendamento.inserido_por }}</td>
+                        <td>{{ agendamento.inserido_em }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'editar_agendamento' agendamento.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form method="post" action="{% url 'excluir_agendamento' agendamento.id %}" onsubmit="return confirm('Tem certeza que deseja excluir este agendamento?');" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Excluir
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-center text-muted">Nenhum agendamento cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

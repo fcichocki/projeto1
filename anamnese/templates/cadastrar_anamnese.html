@@ -1,0 +1,57 @@
+
+    
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+    <h1>Cadastrar Perguntas Anamnese</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="anamnese" placeholder="Digite a pergunta aqui..." maxlength="200"></textarea>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <h2>Perguntas Cadastradas</h2>
+    <ul>
+        {% for anamnese in anamneses %}
+        <li>
+            {{ anamnese.anamnese }}
+            <button onclick="openModal('editModal-{{ anamnese.id }}')">Editar</button>
+            <div id="editModal-{{ anamnese.id }}" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('editModal-{{ anamnese.id }}')">&times;</span>
+                    <form action="{% url 'editar_anamnese' anamnese.id %}" method="post">
+                        {% csrf_token %}
+                        <textarea name="anamnese" maxlength="200">{{ anamnese.anamnese }}</textarea>
+                        <button type="submit">Salvar Alterações</button>
+                    </form>
+                </div>
+            </div>
+            
+            <form action="{% url 'excluir_anamnese' anamnese.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir esta questão?');">Excluir</button>
+            </form>
+        </li>
+        {% empty %}
+        <li>Nenhuma anamnese cadastrada.</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+
+    
+    
+    {% endblock %}
+
+

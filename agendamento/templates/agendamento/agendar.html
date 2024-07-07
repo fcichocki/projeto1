@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Agendar Horário</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Inicialmente desabilita os campos data e horário
+            $('#id_data').prop('disabled', true);
+            $('#id_horario').prop('disabled', true);
+
+            $('#id_profissional').change(function () {
+                // Limpa e habilita os campos data e horário quando o profissional é selecionado
+                $('#id_data').val('').prop('disabled', false);
+                $('#id_horario').empty().append(new Option('---------', '')).prop('disabled', true);
+            });
+
+            $('#id_data').change(function () {
+                var data = $(this).val();
+                var profissional = $('#id_profissional').val();
+                if (data && profissional) {
+                    $.ajax({
+                        url: '{% url "horarios_disponiveis" %}',
+                        data: {
+                            'data': data,
+                            'profissional': profissional
+                        },
+                        success: function (data) {
+                            $('#id_horario').empty();
+                            data.forEach(function (horario) {
+                                var option = new Option(horario, horario);
+                                $('#id_horario').append(option);
+                            });
+                            $('#id_horario').prop('disabled', false);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Agendar Horário</h1>
+    <form method="post" id="agendamentoForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="display: none;">
+            {{ form.status }}
+        </div>
+
+        <button type="submit">Agendar</button>
+    </form>
+</body>
+
+</html>

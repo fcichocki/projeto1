@@ -1,0 +1,60 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container">
+    <div class="header text-center">
+        <h2><i class="fas fa-file-medical"></i> Novo Atestado para {{ paciente.nome }}</h2>
+    </div>
+
+    <form method="post" action="{% url 'novo_atestado' paciente.id %}" class="footer">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="descricaoAtestado" class="form-label">Descrição do Atestado:</label>
+            <input type="text" id="descricaoAtestado" name="descricaoAtestado" class="form-control" list="descricaoList" placeholder="Digite aqui o nome ou número da CID" />
+            <datalist id="descricaoList">
+                {% for atestado in atestados %}
+                    <option value="{{ atestado.descricao }}">
+                {% endfor %}
+            </datalist>
+            <button type="button" class="btn btn-primary mt-2" onclick="adicionarDescricao()"><i class="fas fa-plus"></i> Adicionar</button>
+        </div>
+
+        <div class="mb-3">
+            <label for="atestado" class="form-label">Atestado:</label>
+            <textarea id="atestado" name="atestado" class="form-control" rows="15">{{ texto_pre_carregado }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar Atestado</button>
+        <button type="button" class="btn btn-secondary" onclick="imprimirAtestado()"><i class="fas fa-print"></i> Imprimir</button>
+        <a href="{% url 'detalhes_paciente' paciente.id %}" class="btn btn-secondary"><i class="fas fa-times"></i> Sair sem salvar</a>
+    </form>
+</div>
+
+<script>
+function adicionarDescricao() {
+    var descricao = document.getElementById('descricaoAtestado').value;
+    var cid = "";
+    {% for atestado in atestados %}
+        if (descricao === "{{ atestado.descricao }}") {
+            cid = "{{ atestado.cid }}";
+        }
+    {% endfor %}
+
+    var textarea = document.getElementById('atestado');
+    textarea.value += cid + "\n";
+}
+
+function imprimirAtestado() {
+    var conteudo = document.getElementById('atestado').value;
+    var janelaDeImpressao = window.open('', '', 'height=400,width=600');
+    janelaDeImpressao.document.write('<html><head><title>Atestado</title>');
+    janelaDeImpressao.document.write('</head><body>');
+    janelaDeImpressao.document.write(conteudo);
+    janelaDeImpressao.document.write('</body></html>');
+    janelaDeImpressao.document.close();
+    janelaDeImpressao.print();
+}
+</script>
+
+{% endblock %}

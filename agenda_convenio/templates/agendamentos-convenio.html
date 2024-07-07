@@ -1,0 +1,98 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container my-5">
+  
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-4">Cadastrar Novo Agendamento</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nome" class="form-label">Nome:</label>
+                        <input type="text" name="nome" id="nome" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="telefone" class="form-label">Telefone:</label>
+                        <input type="text" name="telefone" id="telefone" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="data" class="form-label">Data:</label>
+                        <input type="date" name="data" id="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="hora" class="form-label">Hora:</label>
+                        <select name="hora" id="hora" class="form-control" required>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="profissional" class="form-label">Profissional:</label>
+                        <select name="profissional" id="profissional" class="form-control" required>
+                            {% for profissional in profissionais %}
+                            <option value="{{ profissional.id }}">{{ profissional.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="convenio" class="form-label">Convênio:</label>
+                        <select name="convenio" id="convenio" class="form-control" required>
+                            {% for convenio in convenios %}
+                            <option value="{{ convenio.id }}">{{ convenio.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h2 class="mb-4">Instruções</h2>
+            <p>Preencha todos os campos para cadastrar um novo agendamento no convênio. Certifique-se de inserir informações precisas para facilitar o gerenciamento.</p>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h2>Agendamentos Cadastrados</h2>
+        <ul class="list-group mt-3">
+            {% for agendamento in agendamentos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ agendamento.nome }} - {{ agendamento.data|date:"d/m/Y" }} às {{ agendamento.hora }} - {{ agendamento.profissional.nome }} - {{ agendamento.convenio.nome }}
+                <div>
+                    <a href="{% url 'editar_agendamento_convenio' agendamento.id %}" class="btn btn-secondary btn-sm">Editar</a>
+                    <form action="{% url 'excluir_agendamento_convenio' agendamento.id %}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este agendamento?');" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item">Nenhum agendamento cadastrado.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<!-- Bootstrap scripts for optional functionality -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

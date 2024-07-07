@@ -1,0 +1,106 @@
+{% extends 'home.html' %}
+
+{% block conteudo %}
+<div class="container mt-5">
+    <h1 class="mb-5 text-center" style="color: #5D6D7E;">Cadastro de Despesas</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow p-3 mb-5 bg-white rounded" style="border-top: 5px solid #5DADE2;">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="descricao" class="font-weight-bold">Descrição:</label>
+                        <input type="text" name="descricao" id="descricao" class="form-control bg-light" placeholder="O que foi comprado?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="data" class="font-weight-bold">Data:</label>
+                        <input type="date" name="data" id="data" value="{{ hoje }}" class="form-control bg-light" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor" class="font-weight-bold">Valor (R$):</label>
+                        <input type="text" name="valor" id="valor" class="form-control bg-light" placeholder="Valor em reais" required>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-block" style="background-image: linear-gradient(to right, #3498DB , #5DADE2); color: white;">Cadastrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-3 text-center" style="color: #5D6D7E;">Despesas Cadastradas</h2>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Descrição</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for despesa in despesas %}
+                <tr>
+                    <td>{{ despesa.descricao }}</td>
+                    <td>{{ despesa.data }}</td>
+                    <td>{{ despesa.valor }}</td>
+                    <td>
+                        <button class="btn btn-sm" style="background-color: #054F77; color: white;" data-toggle="modal" data-target="#modalEditar{{ despesa.id }}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form action="{% url 'excluir_despesa' despesa.id %}" method="post" onsubmit="return confirm('Confirma exclusão?');" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </form>
+                        <div class="modal fade" id="modalEditar{{ despesa.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ despesa.id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalLabel{{ despesa.id }}">Editar Despesa</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="{% url 'editar_despesa' despesa.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="descricao">Descrição:</label>
+                                                <input type="text" name="descricao" value="{{ despesa.descricao }}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="data">Data:</label>
+                                                        <input type="date" name="data" value="{{ despesa.data|date:'Y-m-d' }}" class="form-control" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="valor">Valor:</label>
+                                                        <input type="text" name="valor" value="{{ despesa.valor }}" class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap, jQuery, and Font Awesome scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+{% endblock %}

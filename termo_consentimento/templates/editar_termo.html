@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+
+    <h1>Editar Termo de Consentimento</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" value="{{ termo.nome }}" required>
+        </div>
+        <div>
+            <label for="termo_consentimento">Termo de Consentimento:</label>
+            <textarea name="termo_consentimento" id="termo_consentimento" required maxlength="5000">{{ termo.termo_consentimento }}</textarea>
+        </div>
+        <button type="submit">Salvar Alterações</button>
+    </form>
+
+    {% endblock %}

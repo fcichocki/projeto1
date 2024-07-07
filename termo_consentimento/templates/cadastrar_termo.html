@@ -1,0 +1,23 @@
+{% extends 'home.html' %}
+
+
+
+{% block conteudo %}
+
+    <h1>Cadastrar Termo de Consentimento</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" required>
+        </div>
+        <div>
+            <label for="termo_consentimento">Termo de Consentimento:</label>
+            <textarea name="termo_consentimento" id="termo_consentimento" required maxlength="5000"></textarea>
+        </div>
+        <input type="hidden" name="usuario" id="usuario" value="{{ request.user.username }}">
+
+        <button type="submit">Salvar</button>
+    </form>
+    
+    {% endblock %}
